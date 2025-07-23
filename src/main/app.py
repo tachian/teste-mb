@@ -1,7 +1,6 @@
 import os
 import sys
 import logging
-import click
 
 import json_logging
 from flask import Flask
@@ -10,6 +9,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from main.presentation_layer import install_error_handlers
 from sqlalchemy import MetaData
+from web3 import Web3
 
 
 
@@ -25,6 +25,7 @@ convention = {
 
 metadata = MetaData(naming_convention=convention)
 db = SQLAlchemy(metadata=metadata)
+w3 = Web3(Web3.HTTPProvider(os.getenv("WEB3_PROVIDER")))
 
 
 def create_app(deploy_env: str = ENV) -> Flask:

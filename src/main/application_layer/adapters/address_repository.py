@@ -44,9 +44,7 @@ class SQLAlchemyAddressRepository:
                     }
                 })
             raise e
-
-        return self.db.session.query(self.db.Address).filter_by(address=address).first()
-
+        
     def create(self, address, private_key):
         """Add a new address to the repository."""
         

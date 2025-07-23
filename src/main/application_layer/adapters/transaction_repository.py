@@ -1,5 +1,5 @@
 import logging
-
+import uuid
 from main.app import db
 from main.application_layer.persistency.tables import transaction_table
 from main.domain_layer.factories import TransactionFactory
@@ -42,6 +42,47 @@ class SQLAlchemyTransactionRepository:
                     "props": {
                         "service": "PostgreSQL",
                         "service method": "get",
+                        "error message": str(e)
+                    }
+                })
+            raise e
+        
+    @classmethod
+    def create(cls, tx_hash: str, asset: str, to_address: str, value: float):
+        logger.info(
+            "Creating Transaction",
+            extra={
+                "props": {
+                    "service": "PostgreSQL",
+                    "service method": "create_password",
+                    "tx_hash": tx_hash,
+                    "asset": asset,
+                    "to_address": to_address,
+                    "value": str(value)
+                }
+            }
+        )
+
+        try:
+            insert_stmt = transaction_table.insert().values(
+                uuid=uuid.uuid4(),
+                tx_hash=tx_hash, 
+                asset=asset,
+                to_address=to_address,
+                value=value)
+            db.session.execute(insert_stmt)
+            db.session.flush()
+        except Exception as e:
+            logger.exception(
+                "Error while trying to create Transaction",
+                extra={
+                    "props": {
+                        "service": "PostgreSQL",
+                        "service method": "create",
+                        "tx_hash": tx_hash,
+                        "asset": asset,
+                        "to_address": to_address,
+                        "value": str(value),
                         "error message": str(e)
                     }
                 })

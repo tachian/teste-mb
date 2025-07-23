@@ -1,11 +1,10 @@
 import logging
 import os
 
-from dotenv import load_dotenv
+from dotenv import load_dotenv, find_dotenv
 
-import json
 
-load_dotenv()
+_ = load_dotenv(find_dotenv())
 
 
 class BaseConfig(object):

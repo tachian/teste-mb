@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from uuid import UUID
 
-from main.application_layer.adapters.SQLAlchemyTransferRepository import SQLAlchemyTransferRepository
+from main.application_layer.adapters.transfer_repository import SQLAlchemyTransferRepository
 
 @dataclass
 class Transfer:
