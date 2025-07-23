@@ -1,0 +1,134 @@
+image:
+  name: 178164760726.dkr.ecr.us-east-1.amazonaws.com/lendico.pipeline-runner:latest
+  aws:
+    access-key: $ECR_AWS_KEY_ID_DEV
+    secret-key: $ECR_AWS_SECRET_KEY_DEV
+
+definitions:
+  services:
+    docker:
+      memory: 2048
+
+clone:
+  depth: full    # SonarCloud scanner needs the full history to assign issues properly
+
+pipelines:
+  pull-requests:
+    "*/hotfix/*":
+      - step:
+          name: Hotfix cannot be PR
+          script:
+            - exit 1
+    "**":
+      - step:
+          name: Test
+          caches:
+            - docker
+          script:
+            - /run-build ./.build/test.sh
+          artifacts:
+            - test-reports/**
+          services:
+            - docker
+      - step:
+          name: Lint code
+          script:
+            - cd src
+            - pipe: sonarsource/sonarcloud-scan:1.2.1
+            - pipe: sonarsource/sonarcloud-quality-gate:0.1.4
+      - step:
+          name: "Build PR"
+          caches:
+            - docker
+          script:
+            - /run-build ./.build/build.sh
+          services:
+            - docker
+  branches:
+    master:
+      - step:
+          name: Test
+          caches:
+            - docker
+          script:
+            - /run-build ./.build/test.sh
+          artifacts:
+            - test-reports/**
+          services:
+            - docker
+      - step:
+          name: Lint code
+          script:
+            - cd src
+            - pipe: sonarsource/sonarcloud-scan:1.2.1
+            - pipe: sonarsource/sonarcloud-quality-gate:0.1.4
+      - step:
+          name: "Build master"
+          caches:
+            - docker
+          script:
+            - /run-build ./.build/build.sh
+          services:
+            - docker
+    "{*/feature/*,*/bugfix/*}":
+      - step:
+          name: "Test"
+          caches:
+            - docker
+          script:
+            - /run-build ./.build/test.sh
+          artifacts:
+            - test-reports/**
+          services:
+            - docker
+      - step:
+          name: Lint code
+          runs-on: self.hosted
+          script:
+            - cd src
+            - pipe: sonarsource/sonarcloud-scan:1.2.1
+            - pipe: sonarsource/sonarcloud-quality-gate:0.1.4
+      - step:
+          trigger: "manual"
+          name: "Build dev"
+          caches:
+            - docker
+          script:
+            - BUILD_DEV=1 /run-build ./.build/build.sh
+          services:
+            - docker
+    "*/hotfix/*":
+      - step:
+          name: Test
+          caches:
+            - docker
+          script:
+            - /run-build ./.build/test.sh
+          artifacts:
+            - test-reports/**
+          services:
+            - docker
+      - step:
+          name: Lint code
+          script:
+            - cd src
+            - pipe: sonarsource/sonarcloud-scan:1.2.1
+            - pipe: sonarsource/sonarcloud-quality-gate:0.1.4
+      - step:
+          trigger: "manual"
+          name: "Build dev"
+          caches:
+            - docker
+          script:
+            - BUILD_DEV=1 /run-build ./.build/build.sh;
+          services:
+            - docker
+      - step:
+          name: "Build hotfix"
+          caches:
+            - docker
+          trigger: "manual"
+          script:
+            - /run-build ./.build/build.sh
+          services:
+            - docker

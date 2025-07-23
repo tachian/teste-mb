@@ -1,0 +1,12 @@
+-r requirements.txt
+coverage
+mixer
+mock
+pytest
+pytest-cov
+pytest-mock
+requests-mock
+ipdb
+flask-shell-ipython
+adr-viewer
+pep8
