@@ -2,6 +2,7 @@ import logging
 
 from main.app import db
 from main.application_layer.persistency.tables import address_table
+from main.domain_layer.factories import AddressFactory
 
 logger = logging.getLogger("teste-mb." + __name__)
 

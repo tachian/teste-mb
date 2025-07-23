@@ -3,7 +3,7 @@ from uuid import UUID
 
 from main.app import db
 
-addresse_table = db.Table(
+address_table = db.Table(
     'addresses', db.metadata,
     db.Column('uuid',
               db.Uuid(as_uuid=True),
@@ -21,7 +21,7 @@ transaction_table = db.Table(
     db.Column('tx_hash', db.String(100), unique=True, nullable=False),
     db.Column('asset', db.String(10), nullable=False),
     db.Column('to_address', db.String(100), nullable=False),
-    db.Column('value', db.Float(asdecimal=True), nullable=False)
+    db.Column('value', db.Float(asdecimal=True), nullable=False),
     db.Column('insert_at', db.DateTime(timezone=True), server_default=func.now()),
 )       
 

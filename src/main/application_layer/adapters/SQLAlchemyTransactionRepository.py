@@ -2,6 +2,7 @@ import logging
 
 from main.app import db
 from main.application_layer.persistency.tables import transaction_table
+from main.domain_layer.factories import TransactionFactory
 
 logger = logging.getLogger("teste-mb." + __name__)
 
