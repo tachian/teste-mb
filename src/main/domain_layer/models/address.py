@@ -10,14 +10,9 @@ class Address:
     private_key: str
 
     @classmethod
-    def get(cls):
+    def get(cls, address:str = None):
         """Retrieve an address by its string representation."""
         return SQLAlchemyAddressRepository.get_adresses()
-    
-    @classmethod
-    def get_address(cls, tx_hash: str):
-        """Retrieve an address by its string representation."""
-        return SQLAlchemyAddressRepository.get_address(tx_hash=tx_hash)
 
     @classmethod
     def create(cls, address: str, private_key: str):

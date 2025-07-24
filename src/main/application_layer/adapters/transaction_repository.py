@@ -10,7 +10,7 @@ class SQLAlchemyTransactionRepository:
     """Repository for managing transactions using SQLAlchemy."""
 
     @classmethod
-    def get(cls):
+    def get_transactions(cls):
         """Retrieve all transactions."""
         
         logger.info(
@@ -42,6 +42,45 @@ class SQLAlchemyTransactionRepository:
                     "props": {
                         "service": "PostgreSQL",
                         "service method": "get",
+                        "error message": str(e)
+                    }
+                })
+            raise e
+        
+    @classmethod
+    def get_transaction(cls, tx_hash: str):
+        """Retrieve transaction for tx_hash"""
+        
+        logger.info(
+            "Getting Transactions",
+            extra={
+                "props": {
+                    "service": "PostgreSQL",
+                    "service method": "get",
+                    "tx_hash": tx_hash
+                }
+            }
+        )
+
+        try:
+            transaction = db.session.query(transaction_table).filter(transaction_table.c.tx_hash).all()
+
+            return TransactionFactory(
+                uuid=transaction.uuid,
+                tx_hash=transaction.tx_hash,
+                asset=transaction.asset,
+                to_address=transaction.to_address,
+                value=transaction.value,
+            ).create_transaction()
+        
+        except Exception as e:
+            logger.exception(
+                "Error while trying to get Transactions",
+                extra={
+                    "props": {
+                        "service": "PostgreSQL",
+                        "service method": "get",
+                        "tx_hash": tx_hash,
                         "error message": str(e)
                     }
                 })

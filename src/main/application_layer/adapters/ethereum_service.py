@@ -72,6 +72,7 @@ class EthereumService:
                     "props": {
                         "service": "Ethereum",
                         "service method": "get_transaction",
+                        "tx_hash": tx_hash,
                         "error message": str(e)
                     }
                 })
@@ -101,6 +102,7 @@ class EthereumService:
                     "props": {
                         "service": "Ethereum",
                         "service method": "get_transaction_receipt",
+                        "tx_hash": tx_hash,
                         "error message": str(e)
                     }
                 })
@@ -130,6 +132,7 @@ class EthereumService:
                     "props": {
                         "service": "Ethereum",
                         "service method": "to_checksum_address",
+                        "address": address,
                         "error message": str(e)
                     }
                 })
@@ -160,6 +163,8 @@ class EthereumService:
                     "props": {
                         "service": "Ethereum",
                         "service method": "from_wei",
+                        "value": value,
+                        "unit": unit,
                         "error message": str(e)
                     }
                 })
@@ -190,6 +195,8 @@ class EthereumService:
                     "props": {
                         "service": "Ethereum",
                         "service method": "to_wei",
+                        "value": value,
+                        "unit": unit,
                         "error message": str(e)
                     }
                 })
@@ -219,6 +226,7 @@ class EthereumService:
                     "props": {
                         "service": "Ethereum",
                         "service method": "get_transaction_count",
+                        "address": address,
                         "error message": str(e)
                     }
                 })
@@ -248,6 +256,7 @@ class EthereumService:
                     "props": {
                         "service": "Ethereum",
                         "service method": "contract",
+                        "address": address,
                         "error message": str(e)
                     }
                 })
@@ -277,6 +286,7 @@ class EthereumService:
                     "props": {
                         "service": "Ethereum",
                         "service method": "estimate_gas",
+                        "transaction": transaction,
                         "error message": str(e)
                     }
                 })
@@ -306,6 +316,7 @@ class EthereumService:
                     "props": {
                         "service": "Ethereum",
                         "service method": "send_transaction",
+                        "transaction": transaction,
                         "error message": str(e)
                     }
                 })
@@ -336,9 +347,71 @@ class EthereumService:
                     "props": {
                         "service": "Ethereum",
                         "service method": "wait_for_transaction_receipt",
+                        "tx_hash": tx_hash,
+                        "timeout": timeout,
                         "error message": str(e)
                     }
                 })
             raise e
     
-    
+    def sign_transaction(self, tx: dict, private_key: str):
+        """Sign transaction"""
+        
+        logger.info(
+            "Signing transaction",
+            extra={
+                "props": {
+                    "service": "Ethereum",
+                    "service method": "sign_transaction",
+                    "tx": tx,
+                    "private_key": private_key
+                }
+            }
+        )
+
+        try:
+            return self.w3.eth.account.sign_transaction(tx, private_key)
+        
+        except Exception as e:
+            logger.exception(
+                "Error while trying to sign transaction",
+                extra={
+                    "props": {
+                        "service": "Ethereum",
+                        "service method": "sign_transaction",
+                        "tx": tx,
+                        "private_key": private_key,
+                        "error message": str(e)
+                    }
+                })
+            raise e
+        
+    def send_raw_transaction(self, tx: dict):
+        """Send raw transaction"""
+        
+        logger.info(
+            "Signing transaction",
+            extra={
+                "props": {
+                    "service": "Ethereum",
+                    "service method": "send_raw_transaction",
+                    "tx": tx,
+                }
+            }
+        )
+
+        try:
+            return self.w3.eth.send_raw_transaction(tx)
+        
+        except Exception as e:
+            logger.exception(
+                "Error while trying to send raw transaction",
+                extra={
+                    "props": {
+                        "service": "Ethereum",
+                        "service method": "send_raw_transaction",
+                        "tx": tx,
+                        "error message": str(e)
+                    }
+                })
+            raise e

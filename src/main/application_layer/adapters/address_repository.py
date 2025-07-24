@@ -11,7 +11,7 @@ class SQLAlchemyAddressRepository:
 
     @classmethod
     def get(cls):
-        """Retrieve an address by its string representation."""
+        """Retrieve addresses."""
 
         logger.info(
             "Getting Address",

@@ -3,9 +3,9 @@ from main.application_layer.use_cases import transaction
 from main.application_layer.adapters.ethereum_service import EthereumService
 from main.domain_layer.models.address import Address
 
-class Address:
+class AddressUseCase:
 
-    @transaction
+    @transaction()
     def generate(self, quantity: int):
 
         ethereum_service = EthereumService(w3=w3)

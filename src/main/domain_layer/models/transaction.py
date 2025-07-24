@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from uuid import UUID
 
-from main.application_layer.adapters.SQLAlchemyTransactionRepository import SQLAlchemyTransactionRepository
+from main.application_layer.adapters.transaction_repository import SQLAlchemyTransactionRepository
 
 class Transaction:
     """Transaction model representing a financial transaction."""
@@ -13,9 +13,12 @@ class Transaction:
     value: float
 
     @classmethod
-    def get(cls):
+    def get(cls, tx_hash: str = None):
         """Retrieve all transactions."""
-        return SQLAlchemyTransactionRepository.get()
+        if tx_hash:
+            return SQLAlchemyTransactionRepository.get_transaction(tx_hash=tx_hash)
+        
+        return SQLAlchemyTransactionRepository.get_transaction()
     
     @classmethod
     def create(cls, tx_hash: str, asset: str, to_address: str, value: float):
