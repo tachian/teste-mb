@@ -1,0 +1,19 @@
+version: "3.8"
+
+services:
+  teste-mb-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: final
+    image: teste-mb:latest
+    container_name: teste-mb-app
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./main:/app/main
+      - ./addresses.db:/app/addresses.db
+    environment:
+      - FLASK_ENV=production
+      - WEB3_PROVIDER=https://sepolia.infura.io/v3/cd00622eefe6434b8147495edc0c3be9
+    entrypoint: ["./entrypoint.sh", "web"]

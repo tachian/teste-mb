@@ -22,7 +22,7 @@ case "$1" in
   
   
   web)
-    uwsgi --ini ./uwsgi.ini --enable-threads --single-interpreter --gevent 100
+    uwsgi --ini ./uwsgi.ini --enable-threads --single-interpreter
     ;;
   migrate)
     flask db upgrade

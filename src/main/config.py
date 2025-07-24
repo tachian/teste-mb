@@ -14,7 +14,7 @@ class BaseConfig(object):
     DEPLOY_ENV = os.environ.get('DEPLOY_ENV', 'Development')
     LOGS_LEVEL = logging.INFO
     RESTPLUS_VALIDATE = True
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DB_URI', 'sqlite:///addresses.db')
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DB_URI', 'sqlite:////app/addresses.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = True
 
     

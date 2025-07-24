@@ -1,8 +1,7 @@
-FROM 178164760726.dkr.ecr.us-east-1.amazonaws.com/lendico.python3.9-base:v0.1.34 as base
+FROM tachian/python3.12-base:v0.1 as base
 
 # LABELS
 LABEL maintainer="André Tachian <altachian@gmail.com>"
-LABEL slack="squad-titan"
 LABEL application="teste-mb"
 LABEL repository="git@github.com:tachian/teste-mb.git"
 
