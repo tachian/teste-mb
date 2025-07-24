@@ -3,7 +3,7 @@ import threading
 from flask import jsonify
 
 from main.app import w3, db
-from main.application_layer.use_cases import transaction
+# from main.application_layer.use_cases import transaction
 from main.application_layer.adapters.ethereum_service import EthereumService
 from main.domain_layer.models.transfer import Transfer
 
@@ -55,7 +55,6 @@ def get_token_address(symbol, ethereum_service):
 
 class TransferUseCase:
 
-    @transaction()
     def execute(
         self,     
         from_address: str,
@@ -88,7 +87,7 @@ class TransferUseCase:
             gas_price_with_margin = int(gas_price * decimal.Decimal("1.25"))
 
             if asset == "ETH":
-                value = Web3.to_wei(amount, 'ether')
+                value = ethereum_service.to_wei(amount, 'ether')
                 tx = {
                     'nonce': nonce,
                     'to': to_address,
@@ -123,12 +122,14 @@ class TransferUseCase:
                 gas_used=None,
                 gas_price=str(gas_price_with_margin)
             )
+            db.session.commit()
 
             # Enviar transação
             tx_hash = ethereum_service.send_raw_transaction(signed_tx.rawTransaction)
             tx_hash_hex = tx_hash.hex()
             # Atualizar hash
-            transfer = Transfer.update_tx_hash(uuid=new_tx.uuid, tx_hash=tx_hash)
+            Transfer.update_tx_hash(uuid=new_tx.uuid, tx_hash=tx_hash)
+            db.session.commit()
             # Aguardar confirmação
             receipt = ethereum_service.wait_for_transaction_receipt(tx_hash, timeout=120)
             gas_used = receipt.gasUsed

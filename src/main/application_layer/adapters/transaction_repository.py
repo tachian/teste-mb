@@ -63,7 +63,7 @@ class SQLAlchemyTransactionRepository:
         )
 
         try:
-            transaction = db.session.query(transaction_table).filter(transaction_table.c.tx_hash).all()
+            transaction = db.session.query(transaction_table).filter(transaction_table.c.tx_hash == tx_hash).first()
 
             return TransactionFactory(
                 uuid=transaction.uuid,
@@ -71,7 +71,7 @@ class SQLAlchemyTransactionRepository:
                 asset=transaction.asset,
                 to_address=transaction.to_address,
                 value=transaction.value,
-            ).create_transaction()
+            ).create_transaction() if transaction else None
         
         except Exception as e:
             logger.exception(

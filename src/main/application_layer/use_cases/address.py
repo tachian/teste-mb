@@ -11,7 +11,6 @@ class AddressUseCase:
         ethereum_service = EthereumService(w3=w3)
 
         generated = []
-
         for _ in range(quantity):
             account = ethereum_service.create()
             Address.create(

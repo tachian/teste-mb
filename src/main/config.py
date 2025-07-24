@@ -24,7 +24,6 @@ class TestingConfig(BaseConfig):
     DEBUG = True
     TESTING = True
     LOGS_LEVEL = logging.CRITICAL
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DB_URI', 'sqlite:///addresses-test.db')
 class StagingConfig(BaseConfig):
     pass
 

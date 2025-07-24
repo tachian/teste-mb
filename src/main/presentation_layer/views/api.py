@@ -39,7 +39,7 @@ ns = api.namespace('', description='teste-mb API endpoints')
 api.models[validate_model.name] = validate_model
 api.models[transfer_model.name] = transfer_model
 
-@ns.route('/', '/healthz', doc=False)
+@ns.route('/healthz', doc=False)
 class Index(Resource):
     def get(self):
         return dict(
@@ -54,7 +54,8 @@ class Generate(Resource):
 
         address_usecase = AddressUseCase()
         try:
-            return jsonify({'status': 'success', 'generated_addresses': address_usecase.generate(quantity=quantity)}), 201
+            generated_addresses = address_usecase.generate(quantity=quantity)
+            return {'status': 'success', 'generated_addresses': generated_addresses}
         except Exception as e:
             logger.exception(
                 "Generate requested failed",
@@ -69,14 +70,14 @@ class Generate(Resource):
             return {"message": str(e)}, 400    
 
 @ns.route('/addresses')
-class Addresses():
+class Addresses(Resource):
     def get(self):
         try:
             address_usecase = AddressUseCase()
-
-            return jsonify([
-                {"uuid": a.uuid, "address": a.address} for a in address_usecase.get()
-            ]), 200
+            addresses = address_usecase.get()
+            return [
+                {"uuid": str(a.uuid), "address": a.address} for a in addresses
+            ]
         except Exception as e:
             logger.exception(
                 "Addresses requested failed",
@@ -120,14 +121,13 @@ class Validate(Resource):
 @ns.route('/transactions')
 class Transactions(Resource):
 
-    @ns.expect(validate_model)
-    @ns.response(200, 'OK')
     def get(self):
 
         try:
 
             transaction_usecase = TransactionUseCase()
-            transaction_usecase.get_transanctions()
+            transactions = transaction_usecase.get_transanctions()
+            return transactions
 
         except Exception as e:
             logger.exception(

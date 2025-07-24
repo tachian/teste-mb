@@ -12,7 +12,9 @@ class Address:
     @classmethod
     def get(cls, address:str = None):
         """Retrieve an address by its string representation."""
-        return SQLAlchemyAddressRepository.get_adresses()
+        if address:
+            return SQLAlchemyAddressRepository.get_address(address=address)
+        return SQLAlchemyAddressRepository.get()
 
     @classmethod
     def create(cls, address: str, private_key: str):

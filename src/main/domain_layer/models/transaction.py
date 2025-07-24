@@ -3,6 +3,7 @@ from uuid import UUID
 
 from main.application_layer.adapters.transaction_repository import SQLAlchemyTransactionRepository
 
+@dataclass
 class Transaction:
     """Transaction model representing a financial transaction."""
 
@@ -18,7 +19,7 @@ class Transaction:
         if tx_hash:
             return SQLAlchemyTransactionRepository.get_transaction(tx_hash=tx_hash)
         
-        return SQLAlchemyTransactionRepository.get_transaction()
+        return SQLAlchemyTransactionRepository.get_transactions()
     
     @classmethod
     def create(cls, tx_hash: str, asset: str, to_address: str, value: float):

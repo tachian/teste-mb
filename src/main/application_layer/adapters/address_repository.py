@@ -1,4 +1,5 @@
 import logging
+import uuid
 
 from main.app import db
 from main.application_layer.persistency.tables import address_table
@@ -29,8 +30,8 @@ class SQLAlchemyAddressRepository:
             return [
                 AddressFactory(
                     uuid=address.uuid,
-                    question_uuid=address.address,
-                    is_correct=address.private_key
+                    address=address.address,
+                    private_key=address.private_key
                 ).create_address() for address in addresses
             ]            
         except Exception as e:
@@ -45,7 +46,45 @@ class SQLAlchemyAddressRepository:
                 })
             raise e
         
-    def create(self, address, private_key):
+    @classmethod
+    def get_address(cls, address: str):
+        """Retrieve addresses."""
+
+        logger.info(
+            "Getting Address",
+            extra={
+                "props": {
+                    "service": "PostgreSQL",
+                    "service method": "get",
+                    "address": address
+                }
+            }
+        )
+
+        try:
+            address_result = db.session.query(address_table).filter(address_table.c.address == address).first()
+
+            return AddressFactory(
+                    uuid=address_result.uuid,
+                    address=address_result.address,
+                    private_key=address_result.private_key
+                ).create_address() if address_result else None
+
+        except Exception as e:
+            logger.exception(
+                "Error while trying to get Address",
+                extra={
+                    "props": {
+                        "service": "PostgreSQL",
+                        "service method": "get_provider",
+                        "address": address,
+                        "error message": str(e)
+                    }
+                })
+            raise e
+    
+    @classmethod
+    def create(cls, address, private_key):
         """Add a new address to the repository."""
         
         logger.info(
@@ -62,11 +101,13 @@ class SQLAlchemyAddressRepository:
 
         try:
             new_address = address_table.insert().values(
+                uuid=uuid.uuid4(),
                 address=address,
                 private_key=private_key
             )
             db.session.execute(new_address)
-            db.session.commit()
+            db.session.flush()
+
         except Exception as e:
             logger.exception(
                 "Error while trying to add Address",

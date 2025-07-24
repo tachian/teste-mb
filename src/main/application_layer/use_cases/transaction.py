@@ -94,5 +94,5 @@ class TransactionUseCase:
             "hash": t.tx_hash,
             "to": t.to_address,
             "asset": t.asset,
-            "amount": t.value
+            "amount": str(t.value)
         } for t in transactions]
